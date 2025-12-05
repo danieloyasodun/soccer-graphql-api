@@ -22,8 +22,9 @@
   },
   "homepage": "https://github.com/danieloyasodun/soccer-graphql-api#readme",
   "dependencies": {
-    "@apollo/server": "^5.2.0",
+    "@types/express": "^5.0.6",
     "apollo-server-express": "^3.13.0",
+    "body-parser": "^2.2.1",
     "cors": "^2.8.5",
     "dataloader": "^2.2.3",
     "dotenv": "^17.2.3",
@@ -34,8 +35,8 @@
     "pg": "^8.16.3"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.19.6",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
     "@types/node": "^24.10.1",
     "@types/papaparse": "^5.5.1",
     "@types/pg": "^8.15.6",
