@@ -11,7 +11,8 @@
     "ingest": "ts-node scripts/ingest-standard-stats.ts",
     "ingest:shooting": "ts-node scripts/ingest-shooting-stats.ts",
     "ingest:passing": "ts-node scripts/ingest-passing-stats.ts",
-    "ingest:defense": "ts-node scripts/ingest-defense-stats.ts"
+    "ingest:defense": "ts-node scripts/ingest-defense-stats.ts",
+    "ingest:all-remaining": "ts-node scripts/ingest-all-remaining.ts"
   },
   "repository": {
     "type": "git",
