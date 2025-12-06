@@ -40,7 +40,7 @@ export const passingTypeResolvers = {
         [parent.id, seasonEndYear, competition || null]
       );
 
-      return result.rows; // returns all passing type stats
+      return result.rows[0] || null; 
     },
   },
 

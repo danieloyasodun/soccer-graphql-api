@@ -560,40 +560,40 @@ export const typeDefs = gql`
 
   # Passing Type Stats (NEW)
   type PlayerPassingTypeStats {
-    live: Int
-    dead: Int
-    fk: Int
-    through: Int
-    switch: Int
-    cross: Int
-    throwIn: Int
-    corner: Int
-    inCorner: Int
-    outCorner: Int
-    strCorner: Int
-    cmpOutcomes: Int
-    offOutcomes: Int
-    blocksOutcomes: Int
-    minsPer90: Float
+    live_pass: Int
+    dead_pass: Int
+    fk_pass: Int
+    tb_pass: Int
+    sw_pass: Int
+    crs_pass: Int
+    ti_pass: Int
+    ck_pass: Int
+    in_corner: Int
+    out_corner: Int
+    str_corner: Int
+    cmp_outcomes: Int
+    off_outcomes: Int
+    blocks_outcomes: Int
+    mins_per_90: Float
     att: Int
   }
 
   type TeamPassingTypeStats {
-    live: Int
-    dead: Int
-    fk: Int
-    through: Int
-    switch: Int
-    cross: Int
-    throwIn: Int
-    corner: Int
-    inCorner: Int
-    outCorner: Int
-    strCorner: Int
-    cmpOutcomes: Int
-    offOutcomes: Int
-    blocksOutcomes: Int
-    minsPer90: Float
+    live_pass: Int
+    dead_pass: Int
+    fk_pass: Int
+    tb_pass: Int
+    sw_pass: Int
+    crs_pass: Int
+    ti_pass: Int
+    ck_pass: Int
+    in_corner: Int
+    out_corner: Int
+    str_corner: Int
+    cmp_outcomes: Int
+    off_outcomes: Int
+    blocks_outcomes: Int
+    mins_per_90: Float
     att: Int
   }
 

@@ -351,6 +351,8 @@ export const playerResolvers = {
       return loaders.teamLoader.load(stats.team_id);
     },
 
+    
+
     // Map snake_case DB fields to camelCase GraphQL fields
     seasonEndYear: (stats: any) => stats.season_end_year,
     matchesPlayed: (stats: any) => stats.matches_played,
