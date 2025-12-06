@@ -6,13 +6,22 @@ export const typeDefs = gql`
     name: String!
     fbrefUrl: String
     
-    # Team stats for a specific season
+    # Standard stats
     seasonStats(seasonEndYear: Int!, competition: String): TeamSeasonStats
-    
-    # All seasons this team has data for
     allSeasonStats(competition: String): [TeamSeasonStats!]!
     
-    # Players who played for this team
+    # Additional stats (NEW)
+    shootingStats(seasonEndYear: Int!, competition: String): TeamShootingStats
+    passingStats(seasonEndYear: Int!, competition: String): TeamPassingStats
+    defenseStats(seasonEndYear: Int!, competition: String): TeamDefenseStats
+    gcaStats(seasonEndYear: Int!, competition: String): TeamGCAStats
+    possessionStats(seasonEndYear: Int!, competition: String): TeamPossessionStats
+    playingTimeStats(seasonEndYear: Int!, competition: String): TeamPlayingTimeStats
+    miscStats(seasonEndYear: Int!, competition: String): TeamMiscStats
+    keeperStats(seasonEndYear: Int!, competition: String): TeamKeeperStats
+    keeperAdvancedStats(seasonEndYear: Int!, competition: String): TeamKeeperAdvancedStats
+    passingTypeStats(seasonEndYear: Int!, competition: String): TeamPassingTypeStats
+    
     players(seasonEndYear: Int, position: String): [Player!]!
   }
 
@@ -25,19 +34,27 @@ export const typeDefs = gql`
     age: Int
     fbrefUrl: String
     
-    # Current/most recent team
     currentTeam: Team
     
-    # Stats for a specific season
+    # Standard stats
     seasonStats(seasonEndYear: Int!, competition: String): PlayerSeasonStats
-    
-    # All seasons this player has data for
     allSeasonStats(competition: String): [PlayerSeasonStats!]!
-    
-    # Career aggregated stats
     careerStats: PlayerCareerStats!
+    
+    # Additional stats (NEW)
+    shootingStats(seasonEndYear: Int!, competition: String): PlayerShootingStats
+    passingStats(seasonEndYear: Int!, competition: String): PlayerPassingStats
+    defenseStats(seasonEndYear: Int!, competition: String): PlayerDefenseStats
+    gcaStats(seasonEndYear: Int!, competition: String): PlayerGCAStats
+    possessionStats(seasonEndYear: Int!, competition: String): PlayerPossessionStats
+    playingTimeStats(seasonEndYear: Int!, competition: String): PlayerPlayingTimeStats
+    miscStats(seasonEndYear: Int!, competition: String): PlayerMiscStats
+    keeperStats(seasonEndYear: Int!, competition: String): PlayerKeeperStats
+    keeperAdvancedStats(seasonEndYear: Int!, competition: String): PlayerKeeperAdvancedStats
+    passingTypeStats(seasonEndYear: Int!, competition: String): PlayerPassingTypeStats
   }
 
+  # Existing types remain the same...
   type PlayerSeasonStats {
     id: ID!
     player: Player!
@@ -47,13 +64,11 @@ export const typeDefs = gql`
     age: Int
     position: String
     
-    # Playing time
     matchesPlayed: Int!
     starts: Int!
     minutes: Int!
     minutesPer90: Float!
     
-    # Performance
     goals: Int!
     assists: Int!
     goalsAssists: Int!
@@ -63,18 +78,15 @@ export const typeDefs = gql`
     yellowCards: Int!
     redCards: Int!
     
-    # Expected stats
     xG: Float!
     npxG: Float!
     xAG: Float!
     npxGxAG: Float!
     
-    # Progression
     progressiveCarries: Int!
     progressivePasses: Int!
     progressiveReceptions: Int!
     
-    # Per 90 stats
     goalsPer90: Float!
     assistsPer90: Float!
     goalsAssistsPer90: Float!
@@ -87,17 +99,15 @@ export const typeDefs = gql`
     team: Team!
     seasonEndYear: Int!
     competition: String!
-    teamOrOpponent: String! # "team" or "opponent"
+    teamOrOpponent: String!
     
     numPlayers: Int
     averageAge: Float
     possessionPct: Float
     
-    # Playing time
     matchesPlayed: Int!
     minutes: Int!
     
-    # Performance
     goals: Int!
     assists: Int!
     goalsAssists: Int!
@@ -107,17 +117,14 @@ export const typeDefs = gql`
     yellowCards: Int!
     redCards: Int!
     
-    # Expected stats
     xG: Float!
     npxG: Float!
     xAG: Float!
     npxGxAG: Float!
     
-    # Progression
     progressiveCarries: Int!
     progressivePasses: Int!
     
-    # Per 90 stats
     goalsPer90: Float!
     assistsPer90: Float!
     xGPer90: Float!
@@ -134,12 +141,467 @@ export const typeDefs = gql`
     avgAssistsPer90: Float!
   }
 
+  # ======================================
+  # NEW STAT TYPES
+  # ======================================
+
+  # Shooting Stats
+  type PlayerShootingStats {
+    goalsStandard: Int!
+    shotsStandard: Int!
+    shotsOnTargetStandard: Int!
+    shotsOnTargetPctStandard: Float!
+    shotsPer90Standard: Float!
+    shotsOnTargetPer90Standard: Float!
+    goalsPerShotStandard: Float!
+    goalsPerShotOnTargetStandard: Float!
+    distanceStandard: Float!
+    freeKicksStandard: Int!
+    penaltiesStandard: Int!
+    penaltiesAttemptedStandard: Int!
+    xgExpected: Float!
+    npxgExpected: Float!
+    npxgPerShotExpected: Float!
+    goalsMinusXgExpected: Float!
+    npGoalsMinusXgExpected: Float!
+  }
+
+  type TeamShootingStats {
+    goalsStandard: Int!
+    shotsStandard: Int!
+    shotsOnTargetStandard: Int!
+    shotsOnTargetPctStandard: Float!
+    shotsPer90Standard: Float!
+    shotsOnTargetPer90Standard: Float!
+    goalsPerShotStandard: Float!
+    goalsPerShotOnTargetStandard: Float!
+    distanceStandard: Float!
+    freeKicksStandard: Int!
+    penaltiesStandard: Int!
+    penaltiesAttemptedStandard: Int!
+    xgExpected: Float!
+    npxgExpected: Float!
+    npxgPerShotExpected: Float!
+    goalsMinusXgExpected: Float!
+    npGoalsMinusXgExpected: Float!
+  }
+
+  # Passing Stats
+  type PlayerPassingStats {
+    completedTotal: Int!
+    attemptedTotal: Int!
+    completionPctTotal: Float!
+    totalDistance: Int!
+    progressiveDistance: Int!
+    completedShort: Int!
+    attemptedShort: Int!
+    completionPctShort: Float!
+    completedMedium: Int!
+    attemptedMedium: Int!
+    completionPctMedium: Float!
+    completedLong: Int!
+    attemptedLong: Int!
+    completionPctLong: Float!
+    assists: Int!
+    xag: Float!
+    xaExpected: Float!
+    assistsMinusXag: Float!
+    keyPasses: Int!
+    passesIntoFinalThird: Int!
+    passesIntoPenaltyArea: Int!
+    crossesIntoPenaltyArea: Int!
+    progressivePasses: Int!
+  }
+
+  type TeamPassingStats {
+    completedTotal: Int!
+    attemptedTotal: Int!
+    completionPctTotal: Float!
+    totalDistance: Int!
+    progressiveDistance: Int!
+    completedShort: Int!
+    attemptedShort: Int!
+    completionPctShort: Float!
+    completedMedium: Int!
+    attemptedMedium: Int!
+    completionPctMedium: Float!
+    completedLong: Int!
+    attemptedLong: Int!
+    completionPctLong: Float!
+    assists: Int!
+    xag: Float!
+    xaExpected: Float!
+    assistsMinusXag: Float!
+    keyPasses: Int!
+    passesIntoFinalThird: Int!
+    passesIntoPenaltyArea: Int!
+    crossesIntoPenaltyArea: Int!
+    progressivePasses: Int!
+  }
+
+  # Defense Stats
+  type PlayerDefenseStats {
+    tackles: Int!
+    tacklesWon: Int!
+    tacklesDef3rd: Int!
+    tacklesMid3rd: Int!
+    tacklesAtt3rd: Int!
+    challengeTackles: Int!
+    challengesAttempted: Int!
+    challengeTacklesPct: Float!
+    challengesLost: Int!
+    blocks: Int!
+    shotsBlocked: Int!
+    passesBlocked: Int!
+    interceptions: Int!
+    tacklesPlusInterceptions: Int!
+    clearances: Int!
+    errors: Int!
+  }
+
+  type TeamDefenseStats {
+    tackles: Int!
+    tacklesWon: Int!
+    tacklesDef3rd: Int!
+    tacklesMid3rd: Int!
+    tacklesAtt3rd: Int!
+    challengeTackles: Int!
+    challengesAttempted: Int!
+    challengeTacklesPct: Float!
+    challengesLost: Int!
+    blocks: Int!
+    shotsBlocked: Int!
+    passesBlocked: Int!
+    interceptions: Int!
+    tacklesPlusInterceptions: Int!
+    clearances: Int!
+    errors: Int!
+  }
+
+  # GCA Stats
+  type PlayerGCAStats {
+    sca: Int!
+    scaPer90: Float!
+    scaPassLive: Int!
+    scaPassDead: Int!
+    scaTakeOn: Int!
+    scaShot: Int!
+    scaFouled: Int!
+    scaDefense: Int!
+    gca: Int!
+    gcaPer90: Float!
+    gcaPassLive: Int!
+    gcaPassDead: Int!
+    gcaTakeOn: Int!
+    gcaShot: Int!
+    gcaFouled: Int!
+    gcaDefense: Int!
+  }
+
+  type TeamGCAStats {
+    sca: Int!
+    scaPer90: Float!
+    scaPassLive: Int!
+    scaPassDead: Int!
+    scaTakeOn: Int!
+    scaShot: Int!
+    scaFouled: Int!
+    scaDefense: Int!
+    gca: Int!
+    gcaPer90: Float!
+    gcaPassLive: Int!
+    gcaPassDead: Int!
+    gcaTakeOn: Int!
+    gcaShot: Int!
+    gcaFouled: Int!
+    gcaDefense: Int!
+  }
+
+  # Possession Stats
+  type PlayerPossessionStats {
+    touches: Int!
+    touchesDefPen: Int!
+    touchesDef3rd: Int!
+    touchesMid3rd: Int!
+    touchesAtt3rd: Int!
+    touchesAttPen: Int!
+    touchesLive: Int!
+    takeOnsAttempted: Int!
+    takeOnsSuccessful: Int!
+    takeOnsSuccessPct: Float!
+    takeOnsTackled: Int!
+    takeOnsTackledPct: Float!
+    carries: Int!
+    carriesTotalDistance: Int!
+    carriesProgressiveDistance: Int!
+    progressiveCarries: Int!
+    carriesIntoFinalThird: Int!
+    carriesIntoPenaltyArea: Int!
+    miscontrols: Int!
+    dispossessed: Int!
+    passesReceived: Int!
+    progressivePassesReceived: Int!
+  }
+
+  type TeamPossessionStats {
+    touches: Int!
+    touchesDefPen: Int!
+    touchesDef3rd: Int!
+    touchesMid3rd: Int!
+    touchesAtt3rd: Int!
+    touchesAttPen: Int!
+    touchesLive: Int!
+    takeOnsAttempted: Int!
+    takeOnsSuccessful: Int!
+    takeOnsSuccessPct: Float!
+    takeOnsTackled: Int!
+    takeOnsTackledPct: Float!
+    carries: Int!
+    carriesTotalDistance: Int!
+    carriesProgressiveDistance: Int!
+    progressiveCarries: Int!
+    carriesIntoFinalThird: Int!
+    carriesIntoPenaltyArea: Int!
+    miscontrols: Int!
+    dispossessed: Int!
+    passesReceived: Int!
+    progressivePassesReceived: Int!
+  }
+
+  # Playing Time Stats
+  type PlayerPlayingTimeStats {
+    matchesPlayed: Int!
+    minutes: Int!
+    minutesPerMatch: Float!
+    minutesPct: Float!
+    minutesPer90: Float!
+    starts: Int!
+    minutesPerStart: Float!
+    completeMatches: Int!
+    subs: Int!
+    minutesPerSub: Float!
+    unusedSub: Int!
+    pointsPerMatch: Float!
+    onGoalsFor: Int!
+    onGoalsAgainst: Int!
+    plusMinus: Int!
+    plusMinusPer90: Float!
+    onOff: Float!
+    onXg: Float!
+    onXga: Float!
+    xgPlusMinus: Float!
+    xgPlusMinusPer90: Float!
+    xgOnOff: Float!
+  }
+
+  type TeamPlayingTimeStats {
+    matchesPlayed: Int!
+    minutes: Int!
+    minutesPerMatch: Float!
+    minutesPct: Float!
+    minutesPer90: Float!
+    starts: Int!
+    minutesPerStart: Float!
+    completeMatches: Int!
+    subs: Int!
+    minutesPerSub: Float!
+    unusedSub: Int!
+    pointsPerMatch: Float!
+    onGoalsFor: Int!
+    onGoalsAgainst: Int!
+    plusMinus: Int!
+    plusMinusPer90: Float!
+    onXg: Float!
+    onXga: Float!
+    xgPlusMinus: Float!
+    xgPlusMinusPer90: Float!
+  }
+
+  # Misc Stats
+  type PlayerMiscStats {
+    yellowCards: Int!
+    redCards: Int!
+    secondYellow: Int!
+    foulsCommitted: Int!
+    foulsDrawn: Int!
+    offsides: Int!
+    crosses: Int!
+    interceptions: Int!
+    tacklesWon: Int!
+    penaltyKicksWon: Int!
+    penaltyKicksConceded: Int!
+    ownGoals: Int!
+    ballRecoveries: Int!
+    aerialsWon: Int!
+    aerialsLost: Int!
+    aerialsWonPct: Float!
+  }
+
+  type TeamMiscStats {
+    yellowCards: Int!
+    redCards: Int!
+    secondYellow: Int!
+    foulsCommitted: Int!
+    foulsDrawn: Int!
+    offsides: Int!
+    crosses: Int!
+    interceptions: Int!
+    tacklesWon: Int!
+    penaltyKicksWon: Int!
+    penaltyKicksConceded: Int!
+    ownGoals: Int!
+    ballRecoveries: Int!
+    aerialsWon: Int!
+    aerialsLost: Int!
+    aerialsWonPct: Float!
+  }
+
+  # Keeper Stats
+  type PlayerKeeperStats {
+    matchesPlayed: Int!
+    starts: Int!
+    minutes: Int!
+    minutesPer90: Float!
+    goalsAgainst: Int!
+    goalsAgainstPer90: Float!
+    shotsOnTargetAgainst: Int!
+    saves: Int!
+    savePct: Float!
+    wins: Int!
+    draws: Int!
+    losses: Int!
+    cleanSheets: Int!
+    cleanSheetPct: Float!
+    penaltyKicksAttempted: Int!
+    penaltyKicksAllowed: Int!
+    penaltyKicksSaved: Int!
+    penaltyKicksMissed: Int!
+    penaltySavePct: Float!
+  }
+
+  type TeamKeeperStats {
+    matchesPlayed: Int!
+    starts: Int!
+    minutes: Int!
+    minutesPer90: Float!
+    goalsAgainst: Int!
+    goalsAgainstPer90: Float!
+    shotsOnTargetAgainst: Int!
+    saves: Int!
+    savePct: Float!
+    wins: Int!
+    draws: Int!
+    losses: Int!
+    cleanSheets: Int!
+    cleanSheetPct: Float!
+    penaltyKicksAttempted: Int!
+    penaltyKicksAllowed: Int!
+    penaltyKicksSaved: Int!
+    penaltyKicksMissed: Int!
+    penaltySavePct: Float!
+  }
+
+  # Keeper Advanced Stats
+  type PlayerKeeperAdvancedStats {
+    goalsAgainst: Int!
+    penaltyKicksAllowed: Int!
+    freeKicksAgainst: Int!
+    cornerKicksAgainst: Int!
+    ownGoalsAgainst: Int!
+    psxg: Float!
+    psxgPerShotOnTarget: Float!
+    psxgPlusMinus: Float!
+    psxgPlusMinusPer90: Float!
+    passesCompletedLaunched: Int!
+    passesAttemptedLaunched: Int!
+    passesPctLaunched: Float!
+    passesAttemptedGk: Int!
+    passesThrows: Int!
+    pctPassesLaunched: Float!
+    avgPassLength: Float!
+    goalKicksAttempted: Int!
+    pctGoalKicksLaunched: Float!
+    avgGoalKickLength: Float!
+    crossesFaced: Int!
+    crossesStopped: Int!
+    crossesStoppedPct: Float!
+    defActionsOutsidePenArea: Int!
+    defActionsOutsidePenAreaPer90: Float!
+    avgDistanceDefActions: Float!
+  }
+
+  type TeamKeeperAdvancedStats {
+    goalsAgainst: Int!
+    penaltyKicksAllowed: Int!
+    freeKicksAgainst: Int!
+    cornerKicksAgainst: Int!
+    ownGoalsAgainst: Int!
+    psxg: Float!
+    psxgPerShotOnTarget: Float!
+    psxgPlusMinus: Float!
+    psxgPlusMinusPer90: Float!
+    passesCompletedLaunched: Int!
+    passesAttemptedLaunched: Int!
+    passesPctLaunched: Float!
+    passesAttemptedGk: Int!
+    passesThrows: Int!
+    pctPassesLaunched: Float!
+    avgPassLength: Float!
+    goalKicksAttempted: Int!
+    pctGoalKicksLaunched: Float!
+    avgGoalKickLength: Float!
+    crossesFaced: Int!
+    crossesStopped: Int!
+    crossesStoppedPct: Float!
+    defActionsOutsidePenArea: Int!
+    defActionsOutsidePenAreaPer90: Float!
+    avgDistanceDefActions: Float!
+  }
+
+  # Passing Type Stats (NEW)
+  type PlayerPassingTypeStats {
+    live: Int
+    dead: Int
+    fk: Int
+    through: Int
+    switch: Int
+    cross: Int
+    throwIn: Int
+    corner: Int
+    inCorner: Int
+    outCorner: Int
+    strCorner: Int
+    cmpOutcomes: Int
+    offOutcomes: Int
+    blocksOutcomes: Int
+    minsPer90: Float
+    att: Int
+  }
+
+  type TeamPassingTypeStats {
+    live: Int
+    dead: Int
+    fk: Int
+    through: Int
+    switch: Int
+    cross: Int
+    throwIn: Int
+    corner: Int
+    inCorner: Int
+    outCorner: Int
+    strCorner: Int
+    cmpOutcomes: Int
+    offOutcomes: Int
+    blocksOutcomes: Int
+    minsPer90: Float
+    att: Int
+  }
+
+  # Existing Query types...
   type Query {
-    # Single entities
     player(id: ID, name: String): Player
     team(id: ID, name: String): Team
     
-    # Lists with filtering
     players(
       teamId: ID
       competition: String
@@ -157,11 +619,9 @@ export const typeDefs = gql`
       offset: Int = 0
     ): [Team!]!
     
-    # Search
     searchPlayers(query: String!): [Player!]!
     searchTeams(query: String!): [Team!]!
     
-    # Analytics & Rankings
     topScorers(
       seasonEndYear: Int!
       competition: String
@@ -194,7 +654,42 @@ export const typeDefs = gql`
       limit: Int = 20
     ): [Player!]!
     
-    # Team analytics
+    # NEW: Additional top queries
+    topShooters(
+      seasonEndYear: Int!
+      competition: String
+      minMinutes: Int = 500
+      limit: Int = 20
+    ): [Player!]!
+    
+    topPassers(
+      seasonEndYear: Int!
+      competition: String
+      minMinutes: Int = 500
+      limit: Int = 20
+    ): [Player!]!
+    
+    topDefenders(
+      seasonEndYear: Int!
+      competition: String
+      minMinutes: Int = 500
+      limit: Int = 20
+    ): [Player!]!
+    
+    topDribblers(
+      seasonEndYear: Int!
+      competition: String
+      minMinutes: Int = 500
+      limit: Int = 20
+    ): [Player!]!
+    
+    topKeepers(
+      seasonEndYear: Int!
+      competition: String
+      minMinutes: Int = 500
+      limit: Int = 20
+    ): [Player!]!
+    
     teamLeaderboard(
       seasonEndYear: Int!
       competition: String!
@@ -202,10 +697,11 @@ export const typeDefs = gql`
       limit: Int = 20
     ): [Team!]!
     
-    # Advanced queries
     playerComparison(playerIds: [ID!]!, seasonEndYear: Int!): [Player!]!
+
+    playerPassingTypeStats(playerSeasonStatId: Int!): PlayerPassingTypeStats
+    teamPassingTypeStats(teamSeasonStatId: Int!): TeamPassingTypeStats
     
-    # Stats
     competitions: [String!]!
     seasons: [Int!]!
   }

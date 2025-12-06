@@ -1,15 +1,8 @@
 -- Player Passing Type Stats
 CREATE TABLE IF NOT EXISTS player_passing_type_stats (
     id SERIAL PRIMARY KEY,
-    season_end_year INTEGER NOT NULL,
-    squad TEXT NOT NULL,
-    comp TEXT NOT NULL,
-    player TEXT NOT NULL,
-    nation TEXT,
-    pos TEXT,
-    age INTEGER,
-    born INTEGER,
-    mins_per_90 REAL,
+    player_season_stat_id INTEGER REFERENCES player_season_stats(id) ON DELETE CASCADE,
+
     att INTEGER,
     live_pass INTEGER,
     dead_pass INTEGER,
@@ -32,12 +25,8 @@ CREATE TABLE IF NOT EXISTS player_passing_type_stats (
 -- Team Passing Type Stats
 CREATE TABLE IF NOT EXISTS team_passing_type_stats (
     id SERIAL PRIMARY KEY,
-    season_end_year INTEGER NOT NULL,
-    squad TEXT NOT NULL,
-    comp TEXT NOT NULL,
-    team_or_opponent TEXT NOT NULL,
-    num_players INTEGER,
-    mins_per_90 REAL,
+    team_season_stat_id INTEGER REFERENCES team_season_stats(id) ON DELETE CASCADE,
+
     att INTEGER,
     live_pass INTEGER,
     dead_pass INTEGER,
