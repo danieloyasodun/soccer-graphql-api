@@ -155,36 +155,39 @@ async function insertPlayerShootingStats(row: PlayerShootingRow) {
   );
 }
 
-async function insertTeamShootingStats(row: TeamShootingRow) {
-  // Find team
+async function insertTeamShootingStats(row: TeamShootingRow, rowIndex: number) {
+  // Step 1: Find general team_id
   const teamResult = await pool.query(
     'SELECT id FROM teams WHERE fbref_url = $1',
     [row.Url]
   );
-
   if (teamResult.rows.length === 0) {
+    console.warn(`⚠️ Team not found for URL: ${row.Url}`);
     return;
   }
-
   const teamId = teamResult.rows[0].id;
 
-  // Find team_season_stat
+  // Step 2: Determine team_or_opponent
+  const teamOrOpponent = row.Team_or_Opponent || (rowIndex % 2 === 0 ? 'opponent' : 'team');
+
+  // Step 3: Find correct team_season_stats row (serial id)
   const statResult = await pool.query(
-    `SELECT id FROM team_season_stats 
-     WHERE team_id = $1 
-     AND season_end_year = $2 
-     AND competition = $3
-     AND team_or_opponent = $4
-     LIMIT 1`,
-    [teamId, parseInteger(row.Season_End_Year), row.Comp, row.Team_or_Opponent]
+    `SELECT id FROM team_season_stats
+     WHERE team_id = $1
+       AND season_end_year = $2
+       AND competition = $3
+       AND team_or_opponent = $4`,
+    [teamId, parseInteger(row.Season_End_Year), row.Comp, teamOrOpponent]
   );
 
   if (statResult.rows.length === 0) {
+    console.warn(`⚠️ No team_season_stats found for ${row.Url} ${row.Season_End_Year} ${row.Comp} (${teamOrOpponent})`);
     return;
   }
 
   const teamSeasonStatId = statResult.rows[0].id;
 
+  // Step 4: Insert shooting stats
   await pool.query(
     `INSERT INTO team_shooting_stats (
       team_season_stat_id,
@@ -227,10 +230,10 @@ async function main() {
     const dataDir = path.join(process.cwd(), 'data');
 
     // Process player shooting stats
-   console.log('📊 Processing player shooting stats...');
+    console.log('📊 Processing player shooting stats...');
     const playerFile = path.join(dataDir, 'big5', 'player', 'big5_player_shooting.csv');
-
-    const playerData = await parseCSV<PlayerShootingRow>(playerFile);
+    
+    const playerData = await parseCSV<PlayerShootingRow>(playerFile) || [];
     console.log(`Found ${playerData.length} player shooting records\n`);
 
     let processedPlayers = 0;
@@ -248,17 +251,13 @@ async function main() {
     console.log('📊 Processing team shooting stats...');
     const teamFile = path.join(dataDir, 'big5', 'team', 'big5_team_shooting.csv');
 
-    const teamData = await parseCSV<TeamShootingRow>(teamFile);
+    const teamData = await parseCSV<TeamShootingRow>(teamFile) || [];
     console.log(`Found ${teamData.length} team shooting records\n`);
 
     let processedTeams = 0;
-    for (const row of teamData) {
-      await insertTeamShootingStats(row);
-      processedTeams++;
-      
-      if (processedTeams % 100 === 0) {
-        console.log(`  ✓ Processed ${processedTeams}/${teamData.length} team records`);
-      }
+    for (let t = 0; t < teamData.length; t++) {
+      await insertTeamShootingStats(teamData[t], t);
+      if ((t + 1) % 100 === 0) console.log(`  ✓ ${t + 1}/${teamData.length} teams`);
     }
     console.log(`✅ All ${processedTeams} team shooting records imported\n`);
 

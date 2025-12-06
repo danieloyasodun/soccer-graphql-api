@@ -144,30 +144,33 @@ async function insertPlayerDefenseStats(row: PlayerDefenseRow) {
   );
 }
 
-async function insertTeamDefenseStats(row: TeamDefenseRow) {
+async function insertTeamDefenseStats(row: TeamDefenseRow, rowIndex: number) {
+  // Step 1: Get team_id
   const teamResult = await pool.query(
     'SELECT id FROM teams WHERE fbref_url = $1',
     [row.Url]
   );
-
   if (teamResult.rows.length === 0) return;
 
   const teamId = teamResult.rows[0].id;
 
-  const statResult = await pool.query(
-    `SELECT id FROM team_season_stats 
-     WHERE team_id = $1 
-     AND season_end_year = $2 
-     AND competition = $3
-     AND team_or_opponent = $4
-     LIMIT 1`,
-    [teamId, parseInteger(row.Season_End_Year), row.Comp, row.Team_or_Opponent]
-  );
+  // Step 2: Determine team_or_opponent
+  const teamOrOpponent = row.Team_or_Opponent || (rowIndex % 2 === 0 ? 'opponent' : 'team');
 
+  // Step 3: Find correct team_season_stats row
+  const statResult = await pool.query(
+    `SELECT id FROM team_season_stats
+     WHERE team_id = $1
+       AND season_end_year = $2
+       AND competition = $3
+       AND team_or_opponent = $4`,
+    [teamId, parseInteger(row.Season_End_Year), row.Comp, teamOrOpponent]
+  );
   if (statResult.rows.length === 0) return;
 
   const teamSeasonStatId = statResult.rows[0].id;
 
+  // Step 4: Insert defense stats
   await pool.query(
     `INSERT INTO team_defense_stats (
       team_season_stat_id,
@@ -175,7 +178,7 @@ async function insertTeamDefenseStats(row: TeamDefenseRow) {
       challenge_tackles, challenges_attempted, challenge_tackles_pct, challenges_lost,
       blocks, shots_blocked, passes_blocked,
       interceptions, tackles_plus_interceptions, clearances, errors
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
     ON CONFLICT (team_season_stat_id) DO NOTHING`,
     [
       teamSeasonStatId,
@@ -231,14 +234,10 @@ async function main() {
     console.log(`Found ${teamData.length} team defense records\n`);
 
     let processedTeams = 0;
-    for (const row of teamData) {
-      await insertTeamDefenseStats(row);
-      processedTeams++;
-      
-      if (processedTeams % 100 === 0) {
-        console.log(`  ✓ Processed ${processedTeams}/${teamData.length} team records`);
-      }
+    for (let t = 0; t < teamData.length; t++) {
+      await insertTeamDefenseStats(teamData[t], t);
     }
+
     console.log(`✅ All ${processedTeams} team defense records imported\n`);
 
     // Summary

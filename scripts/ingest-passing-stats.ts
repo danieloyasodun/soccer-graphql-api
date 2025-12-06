@@ -169,30 +169,37 @@ async function insertPlayerPassingStats(row: PlayerPassingRow) {
   );
 }
 
-async function insertTeamPassingStats(row: TeamPassingRow) {
+async function insertTeamPassingStats(row: TeamPassingRow, rowIndex: number) {
+  // Step 1: Get team_id
   const teamResult = await pool.query(
     'SELECT id FROM teams WHERE fbref_url = $1',
     [row.Url]
   );
-
-  if (teamResult.rows.length === 0) return;
-
+  if (teamResult.rows.length === 0) {
+    console.warn(`⚠️ Team not found for URL: ${row.Url}`);
+    return;
+  }
   const teamId = teamResult.rows[0].id;
 
+  // Step 2: Determine team_or_opponent
+  const teamOrOpponent = row.Team_or_Opponent || (rowIndex % 2 === 0 ? 'opponent' : 'team');
+
+  // Step 3: Find the correct team_season_stats row
   const statResult = await pool.query(
-    `SELECT id FROM team_season_stats 
-     WHERE team_id = $1 
-     AND season_end_year = $2 
-     AND competition = $3
-     AND team_or_opponent = $4
-     LIMIT 1`,
-    [teamId, parseInteger(row.Season_End_Year), row.Comp, row.Team_or_Opponent]
+    `SELECT id FROM team_season_stats
+     WHERE team_id = $1
+       AND season_end_year = $2
+       AND competition = $3
+       AND team_or_opponent = $4`,
+    [teamId, parseInteger(row.Season_End_Year), row.Comp, teamOrOpponent]
   );
-
-  if (statResult.rows.length === 0) return;
-
+  if (statResult.rows.length === 0) {
+    console.warn(`⚠️ No team_season_stats found for ${row.Url} ${row.Season_End_Year} ${row.Comp} (${teamOrOpponent})`);
+    return;
+  }
   const teamSeasonStatId = statResult.rows[0].id;
 
+  // Step 4: Insert passing stats
   await pool.query(
     `INSERT INTO team_passing_stats (
       team_season_stat_id,
@@ -204,7 +211,7 @@ async function insertTeamPassingStats(row: TeamPassingRow) {
       assists, xag, xa_expected, assists_minus_xag,
       key_passes, passes_into_final_third, passes_into_penalty_area,
       crosses_into_penalty_area, progressive_passes
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)
     ON CONFLICT (team_season_stat_id) DO NOTHING`,
     [
       teamSeasonStatId,
@@ -267,13 +274,8 @@ async function main() {
     console.log(`Found ${teamData.length} team passing records\n`);
 
     let processedTeams = 0;
-    for (const row of teamData) {
-      await insertTeamPassingStats(row);
-      processedTeams++;
-      
-      if (processedTeams % 100 === 0) {
-        console.log(`  ✓ Processed ${processedTeams}/${teamData.length} team records`);
-      }
+    for (let t = 0; t < teamData.length; t++) {
+      await insertTeamPassingStats(teamData[t], t);
     }
     console.log(`✅ All ${processedTeams} team passing records imported\n`);
 

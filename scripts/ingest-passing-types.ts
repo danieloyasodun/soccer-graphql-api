@@ -183,32 +183,42 @@ async function insertPlayer(row: PlayerPassingTypeRow) {
 // -----------------------------------------------------------
 // Insert Team Passing Type Row (with FK)
 // -----------------------------------------------------------
-async function insertTeam(row: TeamPassingTypeRow) {
-  // Get the team first
+async function insertTeam(row: TeamPassingTypeRow, rowIndex: number) {
+  // Step 1: Find the general team_id from the teams table
   const teamResult = await pool.query(
     'SELECT id FROM teams WHERE fbref_url = $1',
     [row.Url]
   );
-  if (teamResult.rows.length === 0) return;
+
+  if (teamResult.rows.length === 0) {
+    console.warn(`⚠️ Team not found for URL: ${row.Url}`);
+    return;
+  }
+
   const teamId = teamResult.rows[0].id;
 
-  // Find the season-specific row in team_season_stats
+  // Step 2: Determine team_or_opponent
+  // If your CSV doesn't have Team_or_Opponent, we can use rowIndex: even rows = opponent
+  const teamOrOpponent = row.Team_or_Opponent || (rowIndex % 2 === 0 ? 'opponent' : 'team');
+
+  // Step 3: Find the correct team_season_stats row (serial id)
   const seasonResult = await pool.query(
     `SELECT id FROM team_season_stats
      WHERE team_id = $1
        AND season_end_year = $2
        AND competition = $3
        AND team_or_opponent = $4`,
-    [teamId, toInt(row.Season_End_Year), row.Comp, row.Team_or_Opponent]
+    [teamId, toInt(row.Season_End_Year), row.Comp, teamOrOpponent]
   );
 
   if (seasonResult.rows.length === 0) {
-    console.warn(`⚠️ No team_season_stats found for ${row.Squad} ${row.Season_End_Year} ${row.Comp}`);
+    console.warn(`⚠️ No team_season_stats found for ${row.Url} ${row.Season_End_Year} ${row.Comp} (${teamOrOpponent})`);
     return;
   }
 
   const teamSeasonStatId = seasonResult.rows[0].id;
 
+  // Step 4: Insert passing type stats
   await pool.query(
     `
     INSERT INTO team_passing_type_stats (
@@ -271,8 +281,8 @@ async function main() {
     console.log(`Found ${teams.length} team passing type rows`);
 
     let t = 0;
-    for (const row of teams) {
-      await insertTeam(row);
+    for (const [index, row] of teams.entries()) {
+      await insertTeam(row, index);
       if (++t % 200 === 0) console.log(`  ✓ ${t}/${teams.length} teams`);
     }
 
