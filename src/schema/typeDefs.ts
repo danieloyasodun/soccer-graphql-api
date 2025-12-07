@@ -30,7 +30,6 @@ export const typeDefs = gql`
     name: String!
     nation: String
     position: String
-    birthYear: Int
     age: Int
     fbrefUrl: String
     
