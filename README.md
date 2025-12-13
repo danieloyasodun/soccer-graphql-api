@@ -28,6 +28,8 @@ A high-performance GraphQL API providing comprehensive soccer statistics for Eur
 
 ## 🚀 Getting Started
 
+[here](https://github.com/danieloyasodun/soccer-graphql-api/blob/main/SETUP.MD)
+
 
 ## 📈 Performance
 
