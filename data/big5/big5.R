@@ -31,17 +31,17 @@ backfill_player_advanced <- function(season_end, stat) {
 }
 
 
-backfill_player_advanced(season_end= c(2018:2025), stat= "standard")
-backfill_player_advanced(season_end= c(2018:2025), stat= "playing_time")
-backfill_player_advanced(season_end= c(2018:2025), stat= "shooting")
-backfill_player_advanced(season_end= c(2018:2025), stat= "passing")
-backfill_player_advanced(season_end= c(2018:2025), stat= "passing_types")
-backfill_player_advanced(season_end= c(2018:2025), stat= "gca")
-backfill_player_advanced(season_end= c(2018:2025), stat= "defense")
-backfill_player_advanced(season_end= c(2018:2025), stat= "possession")
-backfill_player_advanced(season_end= c(2018:2025), stat= "misc")
-backfill_player_advanced(season_end= c(2018:2025), stat= "keepers")
-backfill_player_advanced(season_end= c(2018:2025), stat= "keepers_adv")
+backfill_player_advanced(season_end= c(2018:2026), stat= "standard")
+backfill_player_advanced(season_end= c(2018:2026), stat= "playing_time")
+backfill_player_advanced(season_end= c(2018:2026), stat= "shooting")
+backfill_player_advanced(season_end= c(2018:2026), stat= "passing")
+backfill_player_advanced(season_end= c(2018:2026), stat= "passing_types")
+backfill_player_advanced(season_end= c(2018:2026), stat= "gca")
+backfill_player_advanced(season_end= c(2018:2026), stat= "defense")
+backfill_player_advanced(season_end= c(2018:2026), stat= "possession")
+backfill_player_advanced(season_end= c(2018:2026), stat= "misc")
+backfill_player_advanced(season_end= c(2018:2026), stat= "keepers")
+backfill_player_advanced(season_end= c(2018:2026), stat= "keepers_adv")
 
 
 #================================================================================================
@@ -62,15 +62,15 @@ backfill_team_advanced <- function(season_end, stat) {
 }
 
 
-backfill_team_advanced(season_end= c(2018:2025), stat= "playing_time")
-backfill_team_advanced(season_end= c(2018:2025), stat= "standard")
-backfill_team_advanced(season_end= c(2018:2025), stat= "shooting")
-backfill_team_advanced(season_end= c(2018:2025), stat= "passing")
-backfill_team_advanced(season_end= c(2018:2025), stat= "passing_types")
-backfill_team_advanced(season_end= c(2018:2025), stat= "gca")
-backfill_team_advanced(season_end= c(2018:2025), stat= "defense")
-backfill_team_advanced(season_end= c(2018:2025), stat= "possession")
-backfill_team_advanced(season_end= c(2018:2025), stat= "misc")
-backfill_team_advanced(season_end= c(2018:2025), stat= "keepers")
-backfill_team_advanced(season_end= c(2018:2025), stat= "keepers_adv")
+backfill_team_advanced(season_end= c(2018:2026), stat= "playing_time")
+backfill_team_advanced(season_end= c(2018:2026), stat= "standard")
+backfill_team_advanced(season_end= c(2018:2026), stat= "shooting")
+backfill_team_advanced(season_end= c(2018:2026), stat= "passing")
+backfill_team_advanced(season_end= c(2018:2026), stat= "passing_types")
+backfill_team_advanced(season_end= c(2018:2026), stat= "gca")
+backfill_team_advanced(season_end= c(2018:2026), stat= "defense")
+backfill_team_advanced(season_end= c(2018:2026), stat= "possession")
+backfill_team_advanced(season_end= c(2018:2026), stat= "misc")
+backfill_team_advanced(season_end= c(2018:2026), stat= "keepers")
+backfill_team_advanced(season_end= c(2018:2026), stat= "keepers_adv")
 
